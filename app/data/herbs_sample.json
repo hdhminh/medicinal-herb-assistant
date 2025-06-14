@@ -1,0 +1,207 @@
+[
+  {
+    "id": 1,
+    "code": "0001_bac_ha",
+    "name": "Bạc hà",
+    "scientific_name": "Mentha arvensis L.",
+    "description": "Bạc hà là cây thân thảo, cao 30-60 cm, thân vuông, có lông mịn. Lá mọc đối, hình trứng hoặc thuôn, mép có răng cưa, mùi thơm đặc trưng. Hoa nhỏ, màu tím nhạt, mọc thành cụm ở nách lá.",
+    "uses": "Theo Đông y, bạc hà có tác dụng sơ phong, thanh nhiệt, giải độc, chữa cảm cúm, nhức đầu, ngạt mũi, đau mắt đỏ, ngực sườn đầy tức. Dùng trong ẩm thực làm gia vị hoặc làm trà giúp thư giãn, hỗ trợ tiêu hóa.",
+    "usage": "Sắc uống: 6-12g lá khô/ngày. Dùng ngoài: Giã lá tươi đắp lên vùng da bị ngứa hoặc nấu nước tắm. Trà bạc hà: Hãm 5-10g lá tươi hoặc khô với nước sôi, uống trong ngày.",
+    "precautions": "Không dùng quá liều vì có thể gây kích ứng dạ dày. Phụ nữ mang thai và trẻ nhỏ nên tham khảo ý kiến bác sĩ trước khi dùng.",
+    "source": "http://phuyencdc.vn/dich-vu/y-hoc-co-truyen/70-cay-thuoc-nam-theo-quy-dinh-cua-bo-y-te.html"
+  },
+  {
+    "id": 2,
+    "code": "0002_bach_bo",
+    "name": "Bách bộ",
+    "scientific_name": "Stemona tuberosa Lour",
+    "description": "Bách bộ là cây dây leo, dài 6-8m, mọc hoang ở nhiều tỉnh miền Bắc Việt Nam như Hòa Bình, Bắc Cạn, Thái Nguyên. Lá hình tim, hoa vàng đỏ, rễ củ mọc thành chùm, màu trắng ngả vàng, vị ngọt hậu đắng.",
+    "uses": "Trị ho lâu ngày, ho do lao phổi, viêm phế quản. Diệt giun, sâu bọ, hỗ trợ điều trị các bệnh về cổ họng.",
+    "usage": "Sắc uống: 6-12g rễ củ khô/ngày. Dùng ngoài: Nấu nước rễ củ để rửa vết thương hoặc ngâm trị ngứa.",
+    "precautions": "Không dùng cho trẻ em dưới 5 tuổi hoặc người có cơ địa mẫn cảm. Cần tham khảo ý kiến thầy thuốc để đảm bảo liều lượng an toàn.",
+    "source": "https://nhathuoclongchau.com.vn/thanh-phan/bach-bo"
+  },
+  {
+    "id": 3,
+    "code": "0003_bach_dong_nu",
+    "name": "Bạch đồng nữ",
+    "scientific_name": "Clerodendrum fragrans (Vent.) R.Br.",
+    "description": "Cây bụi hoặc cây nhỏ, cao 1-2m, lá mọc đối, hình trứng, mép có răng cưa. Hoa trắng, thơm, mọc thành chùm ở đầu cành. Cây mọc hoang ở nhiều vùng đồng bằng và trung du Việt Nam.",
+    "uses": "Theo Đông y, bạch đồng nữ có tác dụng thanh nhiệt, giải độc, điều hòa kinh nguyệt, trị mụn nhọt, viêm da, đau nhức xương khớp. Hỗ trợ điều trị bạch đới (khí hư), viêm nhiễm phụ khoa.",
+    "usage": "Sắc uống: 10-20g lá hoặc rễ khô/ngày. Dùng ngoài: Giã lá tươi đắp lên vùng da bị viêm hoặc nấu nước tắm.",
+    "precautions": "Phụ nữ mang thai và người huyết áp thấp nên thận trọng. Không dùng quá liều để tránh tác dụng phụ như buồn nôn.",
+    "source": "https://suckhoedoisong.vn"
+  },
+  {
+    "id": 4,
+    "code": "0004_bach_hoa_xa_thiet_thao",
+    "name": "Bạch hoa xà thiệt thảo",
+    "scientific_name": "Hedyotis diffusa Willd.",
+    "description": "Cây thảo mọc bò, dài 20-25cm, thân vuông, màu nâu nhạt, lá mọc đối, hình mác thuôn, hoa trắng nhỏ, mọc riêng lẻ. Cây mọc hoang ở bờ ruộng, sườn núi, phổ biến ở trung du và đồng bằng.",
+    "uses": "Thanh nhiệt, giải độc, lợi thấp, tiêu thũng, hỗ trợ điều trị viêm họng, viêm phế quản, viêm gan, sỏi mật, mụn nhọt, và ung thư khi kết hợp với các vị thuốc khác.",
+    "usage": "Sắc uống: 30-60g cây khô (hoặc 125-250g cây tươi)/ngày, chia 2-3 lần. Dùng ngoài: Giã cây tươi đắp lên mụn nhọt hoặc nấu nước rửa vết thương. Trẻ em sốt, co giật: Giã cây tươi, vắt nước, uống 2-3 lần/ngày, mỗi lần 1 thìa canh.",
+    "precautions": "Không dùng cho phụ nữ mang thai, trẻ sơ sinh, hoặc người dùng thuốc tránh thai vì có thể gây tương tác. Liều lượng tối đa: 120g cây tươi hoặc 40g cây khô/ngày. Tham khảo ý kiến bác sĩ trước khi dùng, đặc biệt trong điều trị ung thư.",
+    "source": "https://nhathuoclongchau.com.vn/thanh-phan/bach-hoa-xa-thiet-thao"
+  },
+  {
+    "id": 5,
+    "code": "0005_ban_ha_nam",
+    "name": "Ban ha nam",
+    "scientific_name": "Typhonium trilobatum, Araceae",
+    "description": "Cây thân thảo, cao 20-50 cm, mọc hoang ở vùng đất ẩm, lá chia thành 3 thùy, hoa dạng mo, màu xanh nhạt. Rễ củ nhỏ, có vị cay nhẹ, thường được dùng trong y học cổ truyền.",
+    "uses": "Hỗ trợ trị ho, viêm họng, đau dạ dày, và một số bệnh về đường hô hấp. Có tác dụng giảm đau, kháng viêm nhẹ.",
+    "usage": "Sắc uống: 5-10g rễ củ khô/ngày. Dùng ngoài: Giã rễ tươi đắp lên vùng bị đau hoặc nấu nước rửa.",
+    "precautions": "Không dùng cho người có tiền sử dị ứng với họ Araceae. Phụ nữ mang thai và trẻ em nên tham khảo ý kiến bác sĩ. Tránh dùng liều cao để tránh kích ứng da.",
+    "source": "https://medlatec.vn"
+  },
+  {
+    "id": 6,
+    "code": "0006_bo_chinh_sam",
+    "name": "Bo chinh sam",
+    "scientific_name": "Abelmoschus sagittifolius",
+    "description": "Thông tin mô tả chưa được cập nhật.",
+    "uses": "Chưa có thông tin công dụng.",
+    "usage": "Chưa có hướng dẫn sử dụng.",
+    "precautions": "Chưa rõ lưu ý hoặc chống chỉ định."
+  },
+  {
+    "id": 7,
+    "code": "0007_bo_cong_anh",
+    "name": "Bo cong anh",
+    "scientific_name": "Taraxacum officinale leaf green",
+    "description": "Thông tin mô tả chưa được cập nhật.",
+    "uses": "Chưa có thông tin công dụng.",
+    "usage": "Chưa có hướng dẫn sử dụng.",
+    "precautions": "Chưa rõ lưu ý hoặc chống chỉ định."
+  },
+  {
+    "id": 8,
+    "code": "0008_ca_gai_leo",
+    "name": "Ca gai leo",
+    "scientific_name": "Solanum procumbens Lour",
+    "description": "Thông tin mô tả chưa được cập nhật.",
+    "uses": "Chưa có thông tin công dụng.",
+    "usage": "Chưa có hướng dẫn sử dụng.",
+    "precautions": "Chưa rõ lưu ý hoặc chống chỉ định."
+  },
+  {
+    "id": 9,
+    "code": "0009_cam_thao_dat",
+    "name": "Cam thao dat",
+    "scientific_name": "Scoparia dulcis L. Plantaginaceae",
+    "description": "Thông tin mô tả chưa được cập nhật.",
+    "uses": "Chưa có thông tin công dụng.",
+    "usage": "Chưa có hướng dẫn sử dụng.",
+    "precautions": "Chưa rõ lưu ý hoặc chống chỉ định."
+  },
+  {
+    "id": 10,
+    "code": "0010_co_man_trau",
+    "name": "Co man trau",
+    "scientific_name": "Eleusine indica leaf macro green",
+    "description": "Thông tin mô tả chưa được cập nhật.",
+    "uses": "Chưa có thông tin công dụng.",
+    "usage": "Chưa có hướng dẫn sử dụng.",
+    "precautions": "Chưa rõ lưu ý hoặc chống chỉ định."
+  },
+  {
+    "id": 11,
+    "code": "0011_co_nho_noi",
+    "name": "Co nho noi",
+    "scientific_name": "Bidens pilosa fresh green leaves",
+    "description": "Thông tin mô tả chưa được cập nhật.",
+    "uses": "Chưa có thông tin công dụng.",
+    "usage": "Chưa có hướng dẫn sử dụng.",
+    "precautions": "Chưa rõ lưu ý hoặc chống chỉ định."
+  },
+  {
+    "id": 12,
+    "code": "0012_co_sua_la_nho",
+    "name": "Co sua la nho",
+    "scientific_name": "Euphorbia thymifolia L.",
+    "description": "Thông tin mô tả chưa được cập nhật.",
+    "uses": "Chưa có thông tin công dụng.",
+    "usage": "Chưa có hướng dẫn sử dụng.",
+    "precautions": "Chưa rõ lưu ý hoặc chống chỉ định."
+  },
+  {
+    "id": 13,
+    "code": "0013_co_tranh",
+    "name": "Co tranh",
+    "scientific_name": "Imperata cylindrica green foliage",
+    "description": "Thông tin mô tả chưa được cập nhật.",
+    "uses": "Chưa có thông tin công dụng.",
+    "usage": "Chưa có hướng dẫn sử dụng.",
+    "precautions": "Chưa rõ lưu ý hoặc chống chỉ định."
+  },
+  {
+    "id": 14,
+    "code": "0014_co_xuoc",
+    "name": "Co xuoc",
+    "scientific_name": "Achyranthes aspera L.",
+    "description": "Thông tin mô tả chưa được cập nhật.",
+    "uses": "Chưa có thông tin công dụng.",
+    "usage": "Chưa có hướng dẫn sử dụng.",
+    "precautions": "Chưa rõ lưu ý hoặc chống chỉ định."
+  },
+  {
+    "id": 15,
+    "code": "0015_coi_xay",
+    "name": "Coi xay",
+    "scientific_name": "Abutilon indicum",
+    "description": "Thông tin mô tả chưa được cập nhật.",
+    "uses": "Chưa có thông tin công dụng.",
+    "usage": "Chưa có hướng dẫn sử dụng.",
+    "precautions": "Chưa rõ lưu ý hoặc chống chỉ định."
+  },
+  {
+    "id": 16,
+    "code": "0016_cot_khi",
+    "name": "Cot khi",
+    "scientific_name": "Polygonum cuspidatum Siebold & Zucc",
+    "description": "Thông tin mô tả chưa được cập nhật.",
+    "uses": "Chưa có thông tin công dụng.",
+    "usage": "Chưa có hướng dẫn sử dụng.",
+    "precautions": "Chưa rõ lưu ý hoặc chống chỉ định."
+  },
+  {
+    "id": 17,
+    "code": "0017_cuc_hoa",
+    "name": "Cuc hoa",
+    "scientific_name": "Chrysanthemum morifolium Ramat.",
+    "description": "Thông tin mô tả chưa được cập nhật.",
+    "uses": "Chưa có thông tin công dụng.",
+    "usage": "Chưa có hướng dẫn sử dụng.",
+    "precautions": "Chưa rõ lưu ý hoặc chống chỉ định."
+  },
+  {
+    "id": 18,
+    "code": "0018_cuc_tan_tu_bi",
+    "name": "Cuc tan tu bi",
+    "scientific_name": "Pluchea indica medicinal herb",
+    "description": "Thông tin mô tả chưa được cập nhật.",
+    "uses": "Chưa có thông tin công dụng.",
+    "usage": "Chưa có hướng dẫn sử dụng.",
+    "precautions": "Chưa rõ lưu ý hoặc chống chỉ định."
+  },
+  {
+    "id": 19,
+    "code": "0019_danh_danh",
+    "name": "Danh danh",
+    "scientific_name": "Cape jasmine medicinal herb",
+    "description": "Thông tin mô tả chưa được cập nhật.",
+    "uses": "Chưa có thông tin công dụng.",
+    "usage": "Chưa có hướng dẫn sử dụng.",
+    "precautions": "Chưa rõ lưu ý hoặc chống chỉ định."
+  },
+  {
+    "id": 20,
+    "code": "0020_dau",
+    "name": "Dau",
+    "scientific_name": "Morus alba mulberry green leaf",
+    "description": "Thông tin mô tả chưa được cập nhật.",
+    "uses": "Chưa có thông tin công dụng.",
+    "usage": "Chưa có hướng dẫn sử dụng.",
+    "precautions": "Chưa rõ lưu ý hoặc chống chỉ định."
+  }
+]
