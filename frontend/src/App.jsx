@@ -1,21 +1,40 @@
 import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Header from './components/Header';
 import HerbForm from './components/HerbForm';
+import ImageUpload from './components/ImageUpload';
+import HerbsPage from './components/HerbsPage';
+import FeedbackPage from './components/FeedbackPage';
 import './App.css';
 import { GiMedicines } from 'react-icons/gi';
 
-
 function App() {
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <h1 style={styles.title}>
-          <GiMedicines style={{ marginRight: '10px', color: '#43a047' }} />
-          Hệ thống hỏi đáp dược liệu
-        </h1>
-        <p style={styles.subtitle}>Nhập mã cây và câu hỏi để nhận câu trả lời từ AI</p>
-        <HerbForm />
+    <BrowserRouter>
+      <Header />
+      <div style={styles.container}>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <div style={styles.card}>
+                <h1 style={styles.title}>
+                  <GiMedicines style={{ marginRight: '10px', color: '#43a047' }} />
+                  Hệ thống hỏi đáp dược liệu
+                </h1>
+                <p style={styles.subtitle}>Nhập mã cây, câu hỏi hoặc chọn ảnh để xem trước</p>
+                <HerbForm />
+                <hr style={styles.divider} />
+                <h2 style={styles.sectionTitle}>Xem trước ảnh cây thuốc</h2>
+                <ImageUpload />
+              </div>
+            }
+          />
+          <Route path="/herbs" element={<HerbsPage />} />
+          <Route path="/feedback" element={<FeedbackPage />} />
+        </Routes>
       </div>
-    </div>
+    </BrowserRouter>
   );
 }
 
@@ -47,6 +66,16 @@ const styles = {
     marginBottom: '20px',
     textAlign: 'center',
     color: '#555',
+  },
+  divider: {
+    border: '1px solid #e0e0e0',
+    margin: '20px 0',
+  },
+  sectionTitle: {
+    fontSize: '22px',
+    color: '#2e7d32',
+    textAlign: 'center',
+    marginBottom: '20px',
   },
 };
 
