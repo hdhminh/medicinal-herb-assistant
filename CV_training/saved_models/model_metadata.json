@@ -1,0 +1,104 @@
+{
+  "model_info": {
+    "model_name": "DINOv2Classifier",
+    "backbone_frozen": true,
+    "num_classes": 30,
+    "embed_dim": 1024,
+    "total_parameters": 305034526,
+    "trainable_parameters": 665886,
+    "backbone_parameters": 304368640,
+    "classifier_parameters": 665886,
+    "model_size_mb": 1163.614372253418,
+    "architecture": {
+      "backbone": "DINOv2",
+      "classifier_layers": 3,
+      "hidden_dims": [
+        512,
+        256
+      ],
+      "dropout_rates": [
+        0.1,
+        0.15
+      ]
+    }
+  },
+  "class_names": [
+    "0001_bac_ha",
+    "0006_bo_chinh_sam",
+    "0008_ca_gai_leo",
+    "0009_cam_thao_dat",
+    "0010_co_man_trau",
+    "0013_co_tranh",
+    "0015_coi_xay",
+    "0017_cuc_hoa",
+    "0019_danh_danh",
+    "0020_dau",
+    "0023_diep_ha_chau",
+    "0024_dinh_lang",
+    "0026_dua_can",
+    "0029_ha_kho_thao",
+    "0033_huyet_du",
+    "0035_ich_mau",
+    "0036_ke_dau_ngua",
+    "0038_kim_ngan",
+    "0041_la_lot",
+    "0042_ma_de",
+    "0050_ngu_gia_bi_chan_chim",
+    "0052_nhot",
+    "0055_quyt",
+    "0056_rau_ma",
+    "0057_rau_meo",
+    "0058_rau_sam",
+    "0060_sai_dat",
+    "0065_trac_ba_diep",
+    "0067_xa_can",
+    "0070_y_di"
+  ],
+  "num_classes": 30,
+  "class_to_idx": {
+    "0001_bac_ha": 0,
+    "0006_bo_chinh_sam": 1,
+    "0008_ca_gai_leo": 2,
+    "0009_cam_thao_dat": 3,
+    "0010_co_man_trau": 4,
+    "0013_co_tranh": 5,
+    "0015_coi_xay": 6,
+    "0017_cuc_hoa": 7,
+    "0019_danh_danh": 8,
+    "0020_dau": 9,
+    "0023_diep_ha_chau": 10,
+    "0024_dinh_lang": 11,
+    "0026_dua_can": 12,
+    "0029_ha_kho_thao": 13,
+    "0033_huyet_du": 14,
+    "0035_ich_mau": 15,
+    "0036_ke_dau_ngua": 16,
+    "0038_kim_ngan": 17,
+    "0041_la_lot": 18,
+    "0042_ma_de": 19,
+    "0050_ngu_gia_bi_chan_chim": 20,
+    "0052_nhot": 21,
+    "0055_quyt": 22,
+    "0056_rau_ma": 23,
+    "0057_rau_meo": 24,
+    "0058_rau_sam": 25,
+    "0060_sai_dat": 26,
+    "0065_trac_ba_diep": 27,
+    "0067_xa_can": 28,
+    "0070_y_di": 29
+  },
+  "img_size": [
+    294,
+    294
+  ],
+  "best_val_acc": 0.9900584795321637,
+  "model_path": "saved_models\\herb_recognition_model.pth",
+  "training_config": {
+    "batch_size": 8,
+    "img_size": [
+      294,
+      294
+    ],
+    "device": "cuda:0"
+  }
+}
