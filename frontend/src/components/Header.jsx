@@ -9,29 +9,7 @@ const Header = () => {
         <GiMedicines style={styles.logoIcon} />
         <span style={styles.logoText}>Hệ thống hỏi đáp dược liệu</span>
       </div>
-      <nav style={styles.nav}>
-        <NavLink
-          to="/"
-          style={styles.navLink}
-          activeStyle={{ ...styles.navLink, ...styles.activeLink }}
-        >
-          Câu hỏi
-        </NavLink>
-        <NavLink
-          to="/herbs"
-          style={styles.navLink}
-          activeStyle={{ ...styles.navLink, ...styles.activeLink }}
-        >
-          Loại cây
-        </NavLink>
-        <NavLink
-          to="/feedback"
-          style={styles.navLink}
-          activeStyle={{ ...styles.navLink, ...styles.activeLink }}
-        >
-          Feedback
-        </NavLink>
-      </nav>
+      
     </header>
   );
 };
