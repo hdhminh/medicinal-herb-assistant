@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import ReactMarkdown from 'react-markdown';
 import { herbCodes } from '../constants/herbCodes';
 import Select from 'react-select';
 import { FaRocket } from 'react-icons/fa';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
-import { BiMailSend } from 'react-icons/bi';
-import { FiLink } from 'react-icons/fi';
-
+import HerbsPage from './HerbsPage';
+import FeedbackPage from './FeedbackPage';
 
 const HerbForm = () => {
   const [code, setCode] = useState('');
   const [question, setQuestion] = useState('');
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
 
   const handleAsk = async () => {
     setLoading(true);
@@ -66,22 +65,24 @@ const HerbForm = () => {
       </button>
 
       {response && response.answer && (
-        <div style={styles.answerBox}>
-          <strong style={styles.answerLabel}>
-            <BiMailSend style={styles.inlineIcon} /> Trả lời:
-          </strong>
-          <div style={styles.answerText}>
-            <ReactMarkdown>{response.answer}</ReactMarkdown>
+        <>
+          <div style={styles.herbsPageBox}>
+            <HerbsPage selectedCode={code} hasAnswer={!!response && !!response.answer} />
           </div>
-          {response.source && (
-            <p style={styles.source}>
-              <FiLink style={styles.inlineIcon} /> Nguồn:{' '}
-              <a href={response.source} target="_blank" rel="noopener noreferrer">
-                {response.source_title || response.source}
-              </a>
-            </p>
+
+          <button
+            style={{ ...styles.button, background: 'linear-gradient(to right, #81c784, #66bb6a)' }}
+            onClick={() => setShowFeedback(!showFeedback)}
+          >
+            {showFeedback ? 'Ẩn Phản Hồi' : 'Gửi Phản Hồi'}
+          </button>
+
+          {showFeedback && (
+            <div style={styles.feedbackBox}>
+              <FeedbackPage />
+            </div>
           )}
-        </div>
+        </>
       )}
     </div>
   );
@@ -120,30 +121,23 @@ const styles = {
     border: 'none',
     cursor: 'pointer',
     transition: 'background 0.3s',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  answerBox: {
+  feedbackBox: {
     marginTop: '20px',
     backgroundColor: '#f1f8e9',
     padding: '18px',
     borderRadius: '10px',
     boxShadow: '0 3px 10px rgba(0,0,0,0.1)',
   },
-  answerLabel: {
-    display: 'block',
-    marginBottom: '10px',
-    fontSize: '18px',
-    color: '#33691e',
-  },
-  answerText: {
-    lineHeight: '1.7',
-    fontSize: '16px',
-    color: '#333',
-  },
-  source: {
-    marginTop: '12px',
-    fontStyle: 'italic',
-    fontSize: '14px',
-    color: '#2e7d32',
+  herbsPageBox: {
+    marginTop: '20px',
+    backgroundColor: '#f1f8e9',
+    padding: '18px',
+    borderRadius: '10px',
+    boxShadow: '0 3px 10px rgba(0,0,0,0.1)',
   },
 };
 

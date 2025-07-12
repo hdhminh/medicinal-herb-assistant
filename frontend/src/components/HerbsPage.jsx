@@ -1,50 +1,112 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { FiImage } from 'react-icons/fi';
 
-const HerbsPage = () => {
+const HerbsPage = ({ selectedCode, hasAnswer }) => {
   const [herbs, setHerbs] = useState([]);
-  const [expandedHerbId, setExpandedHerbId] = useState(null);
   const [error, setError] = useState(null);
-
-  // Placeholder image
+  const [herbImages, setHerbImages] = useState({});
+  const [visibleImages, setVisibleImages] = useState({});
+  const [moreClicks, setMoreClicks] = useState({});
+  const maxClicks = 3;
+  const imagesPerClick = 5;
   const placeholderImage = 'https://images.unsplash.com/photo-1598511726619-6f57f43fc246?w=300';
 
-  // Fetch herbs from backend
   useEffect(() => {
-    fetch('http://localhost:8000/herb/list')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch herbs data');
-        }
-        return response.json();
-      })
-      .then(data => {
-        setHerbs(data.map(herb => ({
-          ...herb,
-          image_url: `/images/${herb.code}.jpg`
-        })));
-      })
-      .catch(error => {
-        console.error('Error loading herbs:', error);
-        setError('Không thể tải danh sách cây thuốc. Vui lòng thử lại sau.');
-      });
-  }, []);
+    if (selectedCode && hasAnswer) {
+      fetch(`http://localhost:8000/herb/list?code=${selectedCode}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch herb data');
+          }
+          return response.json();
+        })
+        .then(data => {
+          const herbData = Array.isArray(data) ? data : [data];
+          setHerbs(herbData.map(herb => ({
+            ...herb,
+            image_url: `/images/${herb.code}.jpg`
+          })));
+          if (herbData.length > 0) {
+            fetchHerbImages(herbData[0].id, selectedCode);
+          }
+        })
+        .catch(error => {
+          console.error('Error loading herb:', error);
+          setError('Không thể tải thông tin cây thuốc. Vui lòng thử lại sau.');
+        });
+    } else {
+      setHerbs([]);
+      setHerbImages({});
+      setVisibleImages({});
+      setMoreClicks({});
+      setError(null);
+    }
+  }, [selectedCode, hasAnswer]);
 
-  const handleToggle = (id) => {
-    setExpandedHerbId(expandedHerbId === id ? null : id);
+  const fetchHerbImages = async (herbId, code) => {
+    try {
+      const imageRes = await axios.get(`http://localhost:8000/herb/images/${code}`);
+      const images = imageRes.data.images || [];
+      const selectedHerb = herbs.find(h => h.code === code);
+      const primaryImage = selectedHerb ? selectedHerb.image_url : placeholderImage;
+      const allImages = [primaryImage, ...images];
+      setHerbImages(prev => ({
+        ...prev,
+        [herbId]: allImages.length > 0 ? allImages : [placeholderImage]
+      }));
+      setVisibleImages(prev => ({
+        ...prev,
+        [herbId]: allImages.slice(0, imagesPerClick)
+      }));
+      setMoreClicks(prev => ({ ...prev, [herbId]: 0 }));
+    } catch (imageError) {
+      console.error(`Error fetching images for herb ${code}:`, imageError);
+      const selectedHerb = herbs.find(h => h.code === code);
+      setHerbImages(prev => ({
+        ...prev,
+        [herbId]: selectedHerb ? [selectedHerb.image_url] : [placeholderImage]
+      }));
+      setVisibleImages(prev => ({
+        ...prev,
+        [herbId]: selectedHerb ? [selectedHerb.image_url] : [placeholderImage]
+      }));
+      setMoreClicks(prev => ({ ...prev, [herbId]: 0 }));
+    }
+  };
+
+  const handleMorePictures = (herbId) => {
+    if (moreClicks[herbId] < maxClicks) {
+      const nextImages = herbImages[herbId].slice(
+        visibleImages[herbId].length,
+        visibleImages[herbId].length + imagesPerClick
+      );
+      const paddedImages = [
+        ...nextImages,
+        ...Array(Math.max(0, imagesPerClick - nextImages.length)).fill(placeholderImage),
+      ];
+      setVisibleImages(prev => ({
+        ...prev,
+        [herbId]: [...prev[herbId], ...paddedImages.slice(0, imagesPerClick)]
+      }));
+      setMoreClicks(prev => ({
+        ...prev,
+        [herbId]: prev[herbId] + 1
+      }));
+    }
   };
 
   return (
     <div style={styles.container}>
-      <h2 style={styles.title}>Loại Cây Thuốc</h2>
       {error ? (
         <p style={styles.text}>{error}</p>
       ) : herbs.length === 0 ? (
-        <p style={styles.text}>Đang tải dữ liệu...</p>
+        <p style={styles.text}></p>
       ) : (
         <div style={styles.grid}>
-          {herbs.map((herb) => (
+          {herbs.map(herb => (
             <div key={herb.id} style={styles.card}>
-              <div style={styles.cardInner} onClick={() => handleToggle(herb.id)}>
+              <div style={styles.cardInner}>
                 <img
                   src={herb.image_url}
                   alt={herb.name}
@@ -53,13 +115,33 @@ const HerbsPage = () => {
                 />
                 <h3 style={styles.caption}>{herb.name}</h3>
               </div>
-              {expandedHerbId === herb.id && (
-                <div style={styles.details}>
-                  <p><strong>Tên khoa học:</strong> {herb.scientific_name}</p>
-                  <p><strong>Mô tả:</strong> {herb.description}</p>
-                  <p><strong>Công dụng:</strong> {herb.uses}</p>
-                </div>
-              )}
+              <div style={styles.details}>
+                <p><strong>Tên khoa học:</strong> {herb.scientific_name}</p>
+                <p><strong>Mô tả:</strong> {herb.description}</p>
+                <p><strong>Công dụng:</strong> {herb.uses}</p>
+                {visibleImages[herb.id] && (
+                  <div style={styles.imageGrid}>
+                    {visibleImages[herb.id].map((img, index) => (
+                      <img
+                        key={index}
+                        src={img}
+                        alt={`Herb ${herb.name} ${index + 1}`}
+                        style={styles.herbImage}
+                        onError={(e) => { e.target.src = placeholderImage; }}
+                      />
+                    ))}
+                  </div>
+                )}
+                {herbImages[herb.id] && herbImages[herb.id].length > visibleImages[herb.id]?.length && moreClicks[herb.id] < maxClicks && (
+                  <button
+                    style={styles.moreButton}
+                    onClick={() => handleMorePictures(herb.id)}
+                  >
+                    <FiImage style={styles.inlineIcon} />
+                    Xem thêm hình ảnh
+                  </button>
+                )}
+              </div>
             </div>
           ))}
         </div>
@@ -76,12 +158,6 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     padding: '30px',
-  },
-  title: {
-    fontSize: '28px',
-    color: '#2e7d32',
-    marginBottom: '20px',
-    textAlign: 'center',
   },
   text: {
     fontSize: '16px',
@@ -124,6 +200,36 @@ const styles = {
     fontSize: '14px',
     color: '#555',
     borderTop: '1px solid #eee',
+  },
+  imageGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+    gap: '10px',
+    marginTop: '15px',
+  },
+  herbImage: {
+    width: '100%',
+    height: '100px',
+    objectFit: 'cover',
+    borderRadius: '4px',
+    border: '1px solid #ccc',
+  },
+  moreButton: {
+    padding: '8px 12px',
+    borderRadius: '8px',
+    background: 'linear-gradient(to right, #4caf50, #388e3c)',
+    color: '#fff',
+    fontWeight: 'bold',
+    border: 'none',
+    cursor: 'pointer',
+    marginTop: '15px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  inlineIcon: {
+    marginRight: '6px',
+    verticalAlign: 'middle',
   },
 };
 
