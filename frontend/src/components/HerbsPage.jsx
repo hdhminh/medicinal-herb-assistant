@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { FiImage } from 'react-icons/fi';
 
@@ -10,31 +10,116 @@ const HerbsPage = ({ selectedCode, hasAnswer }) => {
   const [moreClicks, setMoreClicks] = useState({});
   const maxClicks = 3;
   const imagesPerClick = 5;
+  const maxTotalImages = 20;
   const placeholderImage = 'https://images.unsplash.com/photo-1598511726619-6f57f43fc246?w=300';
+
+  const fetchHerbData = useCallback(async () => {
+    try {
+      const response = await axios.get(`http://localhost:8000/herb/list`);
+      const herbData = Array.isArray(response.data) ? response.data : [response.data];
+      const filteredHerbs = herbData.filter(herb => herb.code === selectedCode);
+      if (filteredHerbs.length === 0) {
+        setError('Không tìm thấy thông tin cây thuốc.');
+        setHerbs([]);
+        return;
+      }
+      const formattedHerbs = filteredHerbs.map(herb => ({
+        ...herb,
+        image_url: herb.image_url || placeholderImage,
+      }));
+      setHerbs(formattedHerbs);
+      if (formattedHerbs.length > 0) {
+        await fetchHerbImages(formattedHerbs[0].id, selectedCode);
+      }
+    } catch (error) {
+      console.error('Error loading herb:', error);
+      setError('Không thể tải thông tin cây thuốc. Vui lòng thử lại sau.');
+      setHerbs([]);
+      setHerbImages({});
+      setVisibleImages({});
+      setMoreClicks({});
+    }
+  }, [selectedCode]);
+
+  const fetchHerbImages = useCallback(async (herbId, code) => {
+    try {
+      const imageRes = await axios.get(`http://localhost:8000/herb/images/${code}?limit=${imagesPerClick}`);
+      const images = imageRes.data.images || [];
+      const selectedHerb = herbs.find(h => h.code === code) || { image_url: placeholderImage };
+      const primaryImage = selectedHerb.image_url;
+      const initialImages = [primaryImage, ...images].slice(0, imagesPerClick);
+      const paddedImages = [
+        ...initialImages,
+        ...Array(Math.max(0, imagesPerClick - initialImages.length)).fill(placeholderImage),
+      ].slice(0, imagesPerClick);
+      setHerbImages(prev => ({
+        ...prev,
+        [herbId]: paddedImages,
+      }));
+      setVisibleImages(prev => ({
+        ...prev,
+        [herbId]: paddedImages,
+      }));
+      setMoreClicks(prev => ({ ...prev, [herbId]: 0 }));
+    } catch (imageError) {
+      console.error(`Error fetching images for herb ${code}:`, imageError);
+      setHerbImages(prev => ({
+        ...prev,
+        [herbId]: Array(imagesPerClick).fill(placeholderImage),
+      }));
+      setVisibleImages(prev => ({
+        ...prev,
+        [herbId]: Array(imagesPerClick).fill(placeholderImage),
+      }));
+      setMoreClicks(prev => ({ ...prev, [herbId]: 0 }));
+    }
+  }, [herbs]);
+
+  const handleMorePictures = useCallback(async (herbId, code) => {
+    const currentClicks = moreClicks[herbId] || 0;
+    if (currentClicks >= maxClicks) return;
+
+    try {
+      const offset = (currentClicks + 1) * imagesPerClick;
+      const imageRes = await axios.get(`http://localhost:8000/herb/images/${code}?limit=${imagesPerClick}&offset=${offset}`);
+      const newImages = imageRes.data.images || [];
+      const paddedImages = [
+        ...newImages,
+        ...Array(Math.max(0, imagesPerClick - newImages.length)).fill(placeholderImage),
+      ].slice(0, imagesPerClick);
+      setHerbImages(prev => ({
+        ...prev,
+        [herbId]: [...prev[herbId], ...paddedImages].slice(0, maxTotalImages),
+      }));
+      setVisibleImages(prev => ({
+        ...prev,
+        [herbId]: [...prev[herbId], ...paddedImages].slice(0, (currentClicks + 2) * imagesPerClick),
+      }));
+      setMoreClicks(prev => ({
+        ...prev,
+        [herbId]: currentClicks + 1,
+      }));
+    } catch (imageError) {
+      console.error(`Error fetching more images for herb ${code}:`, imageError);
+      const paddedImages = Array(imagesPerClick).fill(placeholderImage);
+      setHerbImages(prev => ({
+        ...prev,
+        [herbId]: [...prev[herbId], ...paddedImages].slice(0, maxTotalImages),
+      }));
+      setVisibleImages(prev => ({
+        ...prev,
+        [herbId]: [...prev[herbId], ...paddedImages].slice(0, (currentClicks + 2) * imagesPerClick),
+      }));
+      setMoreClicks(prev => ({
+        ...prev,
+        [herbId]: currentClicks + 1,
+      }));
+    }
+  }, [moreClicks]);
 
   useEffect(() => {
     if (selectedCode && hasAnswer) {
-      fetch(`http://localhost:8000/herb/list?code=${selectedCode}`)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Failed to fetch herb data');
-          }
-          return response.json();
-        })
-        .then(data => {
-          const herbData = Array.isArray(data) ? data : [data];
-          setHerbs(herbData.map(herb => ({
-            ...herb,
-            image_url: `/images/${herb.code}.jpg`
-          })));
-          if (herbData.length > 0) {
-            fetchHerbImages(herbData[0].id, selectedCode);
-          }
-        })
-        .catch(error => {
-          console.error('Error loading herb:', error);
-          setError('Không thể tải thông tin cây thuốc. Vui lòng thử lại sau.');
-        });
+      fetchHerbData();
     } else {
       setHerbs([]);
       setHerbImages({});
@@ -42,66 +127,18 @@ const HerbsPage = ({ selectedCode, hasAnswer }) => {
       setMoreClicks({});
       setError(null);
     }
-  }, [selectedCode, hasAnswer]);
+  }, [selectedCode, hasAnswer, fetchHerbData]);
 
-  const fetchHerbImages = async (herbId, code) => {
-    try {
-      const imageRes = await axios.get(`http://localhost:8000/herb/images/${code}`);
-      const images = imageRes.data.images || [];
-      const selectedHerb = herbs.find(h => h.code === code);
-      const primaryImage = selectedHerb ? selectedHerb.image_url : placeholderImage;
-      const allImages = [primaryImage, ...images];
-      setHerbImages(prev => ({
-        ...prev,
-        [herbId]: allImages.length > 0 ? allImages : [placeholderImage]
-      }));
-      setVisibleImages(prev => ({
-        ...prev,
-        [herbId]: allImages.slice(0, imagesPerClick)
-      }));
-      setMoreClicks(prev => ({ ...prev, [herbId]: 0 }));
-    } catch (imageError) {
-      console.error(`Error fetching images for herb ${code}:`, imageError);
-      const selectedHerb = herbs.find(h => h.code === code);
-      setHerbImages(prev => ({
-        ...prev,
-        [herbId]: selectedHerb ? [selectedHerb.image_url] : [placeholderImage]
-      }));
-      setVisibleImages(prev => ({
-        ...prev,
-        [herbId]: selectedHerb ? [selectedHerb.image_url] : [placeholderImage]
-      }));
-      setMoreClicks(prev => ({ ...prev, [herbId]: 0 }));
-    }
-  };
-
-  const handleMorePictures = (herbId) => {
-    if (moreClicks[herbId] < maxClicks) {
-      const nextImages = herbImages[herbId].slice(
-        visibleImages[herbId].length,
-        visibleImages[herbId].length + imagesPerClick
-      );
-      const paddedImages = [
-        ...nextImages,
-        ...Array(Math.max(0, imagesPerClick - nextImages.length)).fill(placeholderImage),
-      ];
-      setVisibleImages(prev => ({
-        ...prev,
-        [herbId]: [...prev[herbId], ...paddedImages.slice(0, imagesPerClick)]
-      }));
-      setMoreClicks(prev => ({
-        ...prev,
-        [herbId]: prev[herbId] + 1
-      }));
-    }
-  };
+  if (!hasAnswer || !selectedCode) {
+    return null;
+  }
 
   return (
     <div style={styles.container}>
       {error ? (
         <p style={styles.text}>{error}</p>
       ) : herbs.length === 0 ? (
-        <p style={styles.text}></p>
+        <p style={styles.text}>Không có dữ liệu cây thuốc.</p>
       ) : (
         <div style={styles.grid}>
           {herbs.map(herb => (
@@ -116,9 +153,9 @@ const HerbsPage = ({ selectedCode, hasAnswer }) => {
                 <h3 style={styles.caption}>{herb.name}</h3>
               </div>
               <div style={styles.details}>
-                <p><strong>Tên khoa học:</strong> {herb.scientific_name}</p>
-                <p><strong>Mô tả:</strong> {herb.description}</p>
-                <p><strong>Công dụng:</strong> {herb.uses}</p>
+                <p><strong>Tên khoa học:</strong> {herb.scientific_name || 'Không có dữ liệu'}</p>
+                <p><strong>Mô tả:</strong> {herb.description || 'Không có mô tả'}</p>
+                <p><strong>Công dụng:</strong> {herb.uses || 'Không có công dụng'}</p>
                 {visibleImages[herb.id] && (
                   <div style={styles.imageGrid}>
                     {visibleImages[herb.id].map((img, index) => (
@@ -132,10 +169,10 @@ const HerbsPage = ({ selectedCode, hasAnswer }) => {
                     ))}
                   </div>
                 )}
-                {herbImages[herb.id] && herbImages[herb.id].length > visibleImages[herb.id]?.length && moreClicks[herb.id] < maxClicks && (
+                {moreClicks[herb.id] < maxClicks && (
                   <button
                     style={styles.moreButton}
-                    onClick={() => handleMorePictures(herb.id)}
+                    onClick={() => handleMorePictures(herb.id, herb.code)}
                   >
                     <FiImage style={styles.inlineIcon} />
                     Xem thêm hình ảnh
@@ -203,7 +240,7 @@ const styles = {
   },
   imageGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+    gridTemplateColumns: 'repeat(5, 1fr)',
     gap: '10px',
     marginTop: '15px',
   },
