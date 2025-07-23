@@ -15,6 +15,15 @@ const HerbForm = () => {
   const [showFeedback, setShowFeedback] = useState(false);
 
   const handleAsk = async () => {
+    if (!code || !question) {
+      setResponse({
+        answer: '[Lỗi] Vui lòng chọn mã cây thuốc và nhập câu hỏi.',
+        source: null,
+      });
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setResponse(null);
     try {
@@ -50,7 +59,7 @@ const HerbForm = () => {
         style={styles.textarea}
       />
 
-      <button onClick={handleAsk} disabled={loading} style={styles.button}>
+      <button onClick={handleAsk} disabled={loading || !code || !question} style={styles.button}>
         {loading ? (
           <>
             <AiOutlineLoading3Quarters className="spin" style={{ marginRight: 6 }} />
@@ -64,10 +73,25 @@ const HerbForm = () => {
         )}
       </button>
 
-      {response && response.answer && (
+      {response && response.answer && response.answer !== '[Lỗi] Không thể lấy dữ liệu từ máy chủ.' && response.answer !== '[Lỗi] Vui lòng chọn mã cây thuốc và nhập câu hỏi.' && (
         <>
+          <div style={styles.responseBox}>
+            <strong style={styles.responseLabel}>Kết quả:</strong>
+            <p style={styles.responseText}>{response.answer}</p>
+            {response.source && (
+              <>
+                <strong style={styles.responseLabel}>Nguồn:</strong>
+                <p style={styles.responseText}>
+                  <a href={response.source} target="_blank" rel="noopener noreferrer">
+                    {response.source_title || response.source}
+                  </a>
+                </p>
+              </>
+            )}
+          </div>
+
           <div style={styles.herbsPageBox}>
-            <HerbsPage selectedCode={code} hasAnswer={!!response && !!response.answer} />
+            <HerbsPage selectedCode={code} hasAnswer={true} />
           </div>
 
           <button
@@ -84,6 +108,13 @@ const HerbForm = () => {
           )}
         </>
       )}
+
+      {response && response.answer && (response.answer === '[Lỗi] Không thể lấy dữ liệu từ máy chủ.' || response.answer === '[Lỗi] Vui lòng chọn mã cây thuốc và nhập câu hỏi.') && (
+        <div style={styles.responseBox}>
+          <strong style={styles.responseLabel}>Lỗi:</strong>
+          <p style={{ ...styles.responseText, color: '#d32f2f' }}>{response.answer}</p>
+        </div>
+      )}
     </div>
   );
 };
@@ -94,14 +125,6 @@ const styles = {
     flexDirection: 'column',
     gap: '12px',
     animation: 'fadeIn 0.5s ease-in-out',
-  },
-  input: {
-    padding: '10px 14px',
-    borderRadius: '10px',
-    border: '1px solid #ccc',
-    fontSize: '16px',
-    outline: 'none',
-    transition: 'all 0.3s',
   },
   textarea: {
     padding: '10px 14px',
@@ -124,6 +147,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    opacity: (props) => (props.disabled ? 0.6 : 1),
   },
   feedbackBox: {
     marginTop: '20px',
@@ -138,6 +162,24 @@ const styles = {
     padding: '18px',
     borderRadius: '10px',
     boxShadow: '0 3px 10px rgba(0,0,0,0.1)',
+  },
+  responseBox: {
+    marginTop: '20px',
+    backgroundColor: '#f1f8e9',
+    padding: '18px',
+    borderRadius: '10px',
+    boxShadow: '0 3px 10px rgba(0,0,0,0.1)',
+  },
+  responseLabel: {
+    display: 'block',
+    marginBottom: '10px',
+    fontSize: '18px',
+    color: '#33691e',
+  },
+  responseText: {
+    lineHeight: '1.7',
+    fontSize: '16px',
+    color: '#333',
   },
 };
 
