@@ -10,7 +10,7 @@ app = FastAPI(title="Herb RAG + LLM API")
 app.include_router(herb_router, prefix="/herb", tags=["herb"])
 app.include_router(feedback_router, prefix="", tags=["feedback"])
 
-app.mount("/images", StaticFiles(directory="app/data/images"), name="images")
+app.mount("/herb/images", StaticFiles(directory="app/data/images"), name="images")
 
 app.add_middleware(
     CORSMiddleware,

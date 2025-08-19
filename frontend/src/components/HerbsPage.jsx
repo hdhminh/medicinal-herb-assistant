@@ -43,11 +43,17 @@ const HerbsPage = ({ selectedCode, hasAnswer }) => {
 
   const fetchHerbImages = useCallback(async (herbId, code) => {
     try {
-      const imageRes = await axios.get(`http://localhost:8000/herb/images/${code}?limit=${imagesPerClick}`);
-      const images = imageRes.data.images || [];
-      const selectedHerb = herbs.find(h => h.code === code) || { image_url: placeholderImage };
-      const primaryImage = selectedHerb.image_url;
-      const initialImages = [primaryImage, ...images].slice(0, imagesPerClick);
+      const imageRes = await axios.get(`http://localhost:8000/herb/${code}/images?limit=${imagesPerClick}`);
+      const images = imageRes.data || [];
+      
+      // If we have images from the API, use the first one as the primary image
+      if (images.length > 0) {
+        setHerbs(prevHerbs => prevHerbs.map(h => 
+          h.code === code ? { ...h, image_url: images[0] } : h
+        ));
+      }
+
+      const initialImages = images.slice(0, imagesPerClick);
       const paddedImages = [
         ...initialImages,
         ...Array(Math.max(0, imagesPerClick - initialImages.length)).fill(placeholderImage),
@@ -81,8 +87,8 @@ const HerbsPage = ({ selectedCode, hasAnswer }) => {
 
     try {
       const offset = (currentClicks + 1) * imagesPerClick;
-      const imageRes = await axios.get(`http://localhost:8000/herb/images/${code}?limit=${imagesPerClick}&offset=${offset}`);
-      const newImages = imageRes.data.images || [];
+      const imageRes = await axios.get(`http://localhost:8000/herb/${code}/images?limit=${imagesPerClick}&offset=${offset}`);
+      const newImages = imageRes.data || [];
       const paddedImages = [
         ...newImages,
         ...Array(Math.max(0, imagesPerClick - newImages.length)).fill(placeholderImage),
@@ -143,19 +149,19 @@ const HerbsPage = ({ selectedCode, hasAnswer }) => {
         <div style={styles.grid}>
           {herbs.map(herb => (
             <div key={herb.id} style={styles.card}>
-              <div style={styles.cardInner}>
-                <img
-                  src={herb.image_url}
-                  alt={herb.name}
-                  style={styles.image}
-                  onError={(e) => { e.target.src = placeholderImage; }}
-                />
+              <img
+                src={herb.image_url}
+                alt={herb.name}
+                style={styles.image}
+                onError={(e) => { e.target.src = placeholderImage; }}
+              />
+              <div style={styles.cardContent}>
                 <h3 style={styles.caption}>{herb.name}</h3>
-              </div>
-              <div style={styles.details}>
-                <p><strong>Tên khoa học:</strong> {herb.scientific_name || 'Không có dữ liệu'}</p>
-                <p><strong>Mô tả:</strong> {herb.description || 'Không có mô tả'}</p>
-                <p><strong>Công dụng:</strong> {herb.uses || 'Không có công dụng'}</p>
+                <div style={styles.details}>
+                  <p><strong>Tên khoa học:</strong> {herb.scientific_name || 'Không có dữ liệu'}</p>
+                  <p><strong>Mô tả:</strong> {herb.description || 'Không có mô tả'}</p>
+                  <p><strong>Công dụng:</strong> {herb.uses || 'Không có công dụng'}</p>
+                </div>
                 {visibleImages[herb.id] && (
                   <div style={styles.imageGrid}>
                     {visibleImages[herb.id].map((img, index) => (
@@ -189,12 +195,9 @@ const HerbsPage = ({ selectedCode, hasAnswer }) => {
 
 const styles = {
   container: {
-    minHeight: '100vh',
-    background: 'linear-gradient(135deg, #e8f5e9, #f1f8e9)',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: '30px',
+    width: '100%',
+    maxWidth: '700px',
+    margin: '0 auto',
   },
   text: {
     fontSize: '16px',
@@ -202,45 +205,40 @@ const styles = {
     textAlign: 'center',
   },
   grid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+    display: 'flex',
+    flexDirection: 'column',
     gap: '20px',
-    width: '100%',
-    maxWidth: '1200px',
   },
   card: {
-    background: 'white',
-    borderRadius: '8px',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    background: '#fff',
+    borderRadius: '12px',
     overflow: 'hidden',
-    cursor: 'pointer',
-    transition: 'transform 0.3s, box-shadow 0.3s',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
   },
-  cardInner: {
-    padding: '10px',
-    textAlign: 'center',
+  cardContent: {
+    padding: '20px',
   },
   image: {
     width: '100%',
-    height: '150px',
+    height: '220px',
     objectFit: 'cover',
-    borderRadius: '4px',
   },
   caption: {
-    fontSize: '18px',
-    color: '#333',
-    margin: '10px 0 0',
+    fontSize: '24px',
+    fontWeight: 'bold',
+    color: '#2e7d32',
+    margin: '0 0 15px',
+    borderBottom: '2px solid #e0e0e0',
+    paddingBottom: '10px',
   },
   details: {
-    padding: '15px',
-    background: '#f9f9f9',
-    fontSize: '14px',
-    color: '#555',
-    borderTop: '1px solid #eee',
+    fontSize: '16px',
+    color: '#333',
+    lineHeight: '1.7',
   },
   imageGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(5, 1fr)',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))',
     gap: '10px',
     marginTop: '15px',
   },

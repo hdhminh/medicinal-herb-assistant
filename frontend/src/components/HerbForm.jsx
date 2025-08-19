@@ -10,9 +10,21 @@ import FeedbackPage from './FeedbackPage';
 const HerbForm = () => {
   const [code, setCode] = useState('');
   const [question, setQuestion] = useState('');
+  const [answerType, setAnswerType] = useState('tóm tắt');
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
+
+  const formatResponse = (text) => {
+    if (!text) return '';
+    return text
+      .replace(/### (.*?)\n/g, '<h3>$1</h3>')
+      .replace(/## (.*?)\n/g, '<h2>$1</h2>')
+      .replace(/# (.*?)\n/g, '<h1>$1</h1>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/\n/g, '<br />');
+  };
 
   const handleAsk = async () => {
     if (!code || !question) {
@@ -27,7 +39,7 @@ const HerbForm = () => {
     setLoading(true);
     setResponse(null);
     try {
-      const res = await axios.post('http://localhost:8000/herb/ask', { code, question });
+      const res = await axios.post('http://localhost:8000/herb/ask', { code, question, answer_type: answerType });
       setResponse(res.data);
     } catch (err) {
       setResponse({
@@ -59,6 +71,39 @@ const HerbForm = () => {
         style={styles.textarea}
       />
 
+      <div style={styles.radioGroup}>
+        <label style={styles.radioLabel}>
+          <input
+            type="radio"
+            value="tóm tắt"
+            checked={answerType === 'tóm tắt'}
+            onChange={(e) => setAnswerType(e.target.value)}
+            style={styles.radioInput}
+          />
+          Tóm tắt
+        </label>
+        <label style={styles.radioLabel}>
+          <input
+            type="radio"
+            value="đầy đủ"
+            checked={answerType === 'đầy đủ'}
+            onChange={(e) => setAnswerType(e.target.value)}
+            style={styles.radioInput}
+          />
+          Đầy đủ
+        </label>
+        <label style={styles.radioLabel}>
+          <input
+            type="radio"
+            value="chi tiết"
+            checked={answerType === 'chi tiết'}
+            onChange={(e) => setAnswerType(e.target.value)}
+            style={styles.radioInput}
+          />
+          Chi tiết
+        </label>
+      </div>
+
       <button onClick={handleAsk} disabled={loading || !code || !question} style={styles.button}>
         {loading ? (
           <>
@@ -77,17 +122,22 @@ const HerbForm = () => {
         <>
           <div style={styles.responseBox}>
             <strong style={styles.responseLabel}>Kết quả:</strong>
-            <p style={styles.responseText}>{response.answer}</p>
-            {response.source && (
-              <>
-                <strong style={styles.responseLabel}>Nguồn:</strong>
-                <p style={styles.responseText}>
-                  <a href={response.source} target="_blank" rel="noopener noreferrer">
-                    {response.source_title || response.source}
-                  </a>
-                </p>
-              </>
-            )}
+            <p
+              style={styles.responseText}
+              dangerouslySetInnerHTML={{ __html: formatResponse(response.answer) }}
+            />
+            <div style={styles.sourceContainer}>
+              {response.source && (
+                <div>
+                  <strong style={styles.sourceLabel}>Nguồn:</strong>
+                  <p style={styles.sourceText}>
+                    <a href={response.source} target="_blank" rel="noopener noreferrer">
+                      {response.source_title || response.source}
+                    </a>
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
 
           <div style={styles.herbsPageBox}>
@@ -121,24 +171,32 @@ const HerbForm = () => {
 
 const styles = {
   wrapper: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '12px',
-    animation: 'fadeIn 0.5s ease-in-out',
+    background: 'var(--card-background)',
+    padding: '30px',
+    borderRadius: '12px',
+    boxShadow: '0 4px 12px var(--shadow-color)',
+    animation: 'fadeInUp 0.5s ease-in-out',
+    maxWidth: '600px',
+    margin: '40px auto',
   },
   textarea: {
-    padding: '10px 14px',
-    borderRadius: '10px',
-    border: '1px solid #ccc',
+    width: '100%',
+    padding: '12px',
+    borderRadius: '8px',
+    border: '1px solid var(--border-color)',
     fontSize: '16px',
     outline: 'none',
     transition: 'all 0.3s',
     resize: 'vertical',
+    boxSizing: 'border-box',
+    marginTop: '15px',
+    fontFamily: "'Be Vietnam Pro', sans-serif",
   },
   button: {
-    padding: '10px',
-    borderRadius: '10px',
-    background: 'linear-gradient(to right, #66bb6a, #43a047)',
+    width: '100%',
+    padding: '12px',
+    borderRadius: '8px',
+    background: 'var(--primary-color)',
     color: '#fff',
     fontWeight: 'bold',
     border: 'none',
@@ -147,63 +205,83 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    opacity: (props) => (props.disabled ? 0.6 : 1),
+    marginTop: '15px',
+    fontSize: '16px',
   },
   feedbackBox: {
-    marginTop: '20px',
-    backgroundColor: '#f1f8e9',
-    padding: '18px',
-    borderRadius: '10px',
-    boxShadow: '0 3px 10px rgba(0,0,0,0.1)',
+    marginTop: '30px',
   },
   herbsPageBox: {
-    marginTop: '20px',
-    backgroundColor: '#f1f8e9',
-    padding: '18px',
-    borderRadius: '10px',
-    boxShadow: '0 3px 10px rgba(0,0,0,0.1)',
+    marginTop: '30px',
   },
   responseBox: {
-    marginTop: '20px',
-    backgroundColor: '#f1f8e9',
-    padding: '18px',
-    borderRadius: '10px',
-    boxShadow: '0 3px 10px rgba(0,0,0,0.1)',
+    marginTop: '30px',
+    paddingTop: '20px',
+    borderTop: '1px solid var(--border-color)',
   },
   responseLabel: {
-    display: 'block',
+    fontSize: '20px',
+    fontWeight: 'bold',
+    color: 'var(--primary-color)',
     marginBottom: '10px',
-    fontSize: '18px',
-    color: '#33691e',
   },
   responseText: {
-    lineHeight: '1.7',
+    lineHeight: '1.8',
     fontSize: '16px',
-    color: '#333',
+    marginBottom: '20px',
+  },
+  sourceContainer: {
+    marginTop: '20px',
+    paddingTop: '15px',
+    borderTop: '1px solid var(--border-color)',
+  },
+  sourceLabel: {
+    fontSize: '14px',
+    fontWeight: 'bold',
+    color: 'var(--primary-color)',
+  },
+  sourceText: {
+    fontSize: '14px',
+    color: '#555',
+  },
+  radioGroup: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: '20px',
+    margin: '20px 0',
+  },
+  radioLabel: {
+    display: 'flex',
+    alignItems: 'center',
+    cursor: 'pointer',
+    fontSize: '16px',
+  },
+  radioInput: {
+    marginRight: '8px',
   },
 };
 
 const customSelectStyles = {
   control: (base) => ({
     ...base,
-    borderRadius: '10px',
-    padding: '3px 6px',
+    borderRadius: '8px',
+    padding: '4px',
     fontSize: '16px',
-    borderColor: '#ccc',
+    borderColor: 'var(--border-color)',
     boxShadow: 'none',
-    '&:hover': { borderColor: '#66bb6a' },
+    '&:hover': { borderColor: 'var(--primary-color)' },
   }),
   menu: (base) => ({
     ...base,
-    borderRadius: '10px',
+    borderRadius: '8px',
     zIndex: 100,
   }),
   option: (base, { isFocused }) => ({
     ...base,
-    backgroundColor: isFocused ? '#e0f2f1' : 'white',
-    color: '#333',
-    fontSize: '15px',
-    padding: '10px 12px',
+    backgroundColor: isFocused ? 'var(--background-color)' : 'var(--card-background)',
+    color: 'var(--text-color)',
+    fontSize: '16px',
   }),
 };
 
