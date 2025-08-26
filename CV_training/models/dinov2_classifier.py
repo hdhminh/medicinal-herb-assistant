@@ -11,7 +11,7 @@ This module contains:
 
 import torch
 import torch.nn as nn
-from config import (
+from ..config import (
     DINOV2_CONFIGS, 
     CLASSIFIER_HIDDEN_DIM, 
     CLASSIFIER_INTERMEDIATE_DIM,

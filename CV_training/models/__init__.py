@@ -8,7 +8,7 @@ This package contains:
 - Model utilities
 """
 
-from .herb_cnn import HerbCNN, LightweightHerbCNN, create_herb_cnn, print_model_summary
+from .herb_cnn import HerbCNN
 from .dinov2_classifier import (
     DINOv2Classifier, 
     create_dinov2_classifier, 
@@ -18,9 +18,6 @@ from .dinov2_classifier import (
 
 __all__ = [
     'HerbCNN',
-    'LightweightHerbCNN', 
-    'create_herb_cnn',
-    'print_model_summary',
     'DINOv2Classifier',
     'create_dinov2_classifier',
     'load_dinov2_backbone',
