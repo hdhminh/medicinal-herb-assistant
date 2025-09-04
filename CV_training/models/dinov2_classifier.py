@@ -11,7 +11,7 @@ This module contains:
 
 import torch
 import torch.nn as nn
-from ..config import (
+from CV_training.config import (
     DINOV2_CONFIGS, 
     CLASSIFIER_HIDDEN_DIM, 
     CLASSIFIER_INTERMEDIATE_DIM,
@@ -386,7 +386,7 @@ This module contains:
 
 import torch
 import torch.nn as nn
-from config import (
+from CV_training.config import (
     DINOV2_CONFIGS, 
     CLASSIFIER_HIDDEN_DIM, 
     CLASSIFIER_INTERMEDIATE_DIM,

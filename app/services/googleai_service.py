@@ -16,16 +16,27 @@ def generate_answer_gemini(herb: dict, question: str, answer_type: str = "tóm t
     
     instruction = prompt_instruction.get(answer_type, prompt_instruction["tóm tắt"])
 
-    content = f"""
-        Bạn là một chuyên gia thảo dược. Dưới đây là thông tin chi tiết về cây thuốc:
-
+    herb_details_content = f"""
         Tên: {herb.get('name')}
         Tên khoa học: {herb.get('scientific_name')}
+    """
+
+    if answer_type == "đầy đủ" or answer_type == "chi tiết":
+        herb_details_content += f"""
         Mô tả: {herb.get('description')}
         Công dụng: {herb.get('uses')}
         Cách dùng: {herb.get('usage')}
         Lưu ý: {herb.get('precautions')}
+        """
+    
+    # Source is always included for context, but its display is handled by the frontend
+    herb_details_content += f"""
         Nguồn: {herb.get('source')}
+    """
+
+    content = f"""
+        Bạn là một chuyên gia thảo dược. Dựa trên thông tin chi tiết về cây thuốc sau:
+        {herb_details_content}
 
         Dựa vào thông tin trên, {instruction}
 
@@ -33,7 +44,6 @@ def generate_answer_gemini(herb: dict, question: str, answer_type: str = "tóm t
 
         Câu hỏi: {question}
         """
-
 
     try:
         response = model.generate_content(content)

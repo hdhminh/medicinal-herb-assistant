@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import { BiImageAdd } from 'react-icons/bi';
+import HerbsPage from './HerbsPage'; // Import HerbsPage
+import FeedbackPage from './FeedbackPage'; // Import FeedbackPage
 
 const ImageUpload = () => {
   const [image, setImage] = useState(null);
@@ -9,6 +11,8 @@ const ImageUpload = () => {
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [detailLevel, setDetailLevel] = useState('tóm tắt'); // Default to 'Tóm tắt'
+  const [showFeedback, setShowFeedback] = useState(false); // Add showFeedback state
   const fileInputRef = useRef(null);
 
   const formatResponse = (text) => {
@@ -81,6 +85,7 @@ const ImageUpload = () => {
 
     const formData = new FormData();
     formData.append('file', image);
+    formData.append('detail_level', detailLevel); // Send detail level to backend
 
     try {
       const res = await axios.post('http://localhost:8000/herb/identify', formData, {
@@ -115,22 +120,56 @@ const ImageUpload = () => {
           {image ? 'Chọn ảnh khác' : 'Chọn ảnh cây thuốc'}
         </label>
         {image && (
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            style={{ ...styles.submitButton, opacity: loading ? 0.6 : 1 }}
-          >
-            {loading ? 'Đang xử lý...' : 'Gửi ảnh'}
-          </button>
+          <>
+            <div style={styles.radioGroup}>
+              <label style={styles.radioLabel}>
+                <input
+                  type="radio"
+                  value="tóm tắt"
+                  checked={detailLevel === 'tóm tắt'}
+                  onChange={(e) => setDetailLevel(e.target.value)}
+                  style={styles.radioInput}
+                />
+                Tóm tắt
+              </label>
+              <label style={styles.radioLabel}>
+                <input
+                  type="radio"
+                  value="đầy đủ"
+                  checked={detailLevel === 'đầy đủ'}
+                  onChange={(e) => setDetailLevel(e.target.value)}
+                  style={styles.radioInput}
+                />
+                Đầy đủ
+              </label>
+              <label style={styles.radioLabel}>
+                <input
+                  type="radio"
+                  value="chi tiết"
+                  checked={detailLevel === 'chi tiết'}
+                  onChange={(e) => setDetailLevel(e.target.value)}
+                  style={styles.radioInput}
+                />
+                Chi tiết
+              </label>
+            </div>
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              style={{ ...styles.submitButton, opacity: loading ? 0.6 : 1 }}
+            >
+              {loading ? 'Đang xử lý...' : 'Gửi ảnh'}
+            </button>
+            <button onClick={handleClear} style={styles.clearButton}>
+              Xóa ảnh
+            </button>
+          </>
         )}
       </div>
 
       {preview && (
         <div style={styles.previewBox}>
           <img src={preview} alt="Herb Preview" style={styles.previewImage} />
-          <button onClick={handleClear} style={styles.clearButton}>
-            Xóa ảnh
-          </button>
         </div>
       )}
 
@@ -148,48 +187,14 @@ const ImageUpload = () => {
               <p style={{ ...styles.responseText, color: '#d32f2f' }}>{error}</p>
             </>
           )}
-          {response && response.answer && (
+          {response && !error && ( // Only show result if there's a response and no error
             <>
               <strong style={styles.responseLabel}>Kết quả:</strong>
-              <p
-                style={styles.responseText}
-                dangerouslySetInnerHTML={{ __html: formatResponse(response.answer) }}
-              />
-              {response.name && (
-                <>
-                  <strong style={styles.responseLabel}>Tên cây thuốc:</strong>
-                  <p style={styles.responseText}>{response.name}</p>
-                </>
-              )}
-              {response.scientific_name && (
-                <>
-                  <strong style={styles.responseLabel}>Tên khoa học:</strong>
-                  <p style={styles.responseText}>{response.scientific_name}</p>
-                </>
-              )}
-              {response.description && (
-                <>
-                  <strong style={styles.responseLabel}>Mô tả:</strong>
-                  <p style={styles.responseText}>{response.description}</p>
-                </>
-              )}
-              {response.uses && (
-                <>
-                  <strong style={styles.responseLabel}>Công dụng:</strong>
-                  <p style={styles.responseText}>{response.uses}</p>
-                </>
-              )}
-              {response.usage && (
-                <>
-                  <strong style={styles.responseLabel}>Cách dùng:</strong>
-                  <p style={styles.responseText}>{response.usage}</p>
-                </>
-              )}
-              {response.precautions && (
-                <>
-                  <strong style={styles.responseLabel}>Lưu ý:</strong>
-                  <p style={styles.responseText}>{response.precautions}</p>
-                </>
+              {response.answer && (
+                <p
+                  style={styles.responseText}
+                  dangerouslySetInnerHTML={{ __html: formatResponse(response.answer) }}
+                />
               )}
               {response.source && (
                 <>
@@ -200,6 +205,23 @@ const ImageUpload = () => {
                     </a>
                   </p>
                 </>
+              )}
+              {response.herb_code && (
+                <div style={styles.herbsPageBox}>
+                  <HerbsPage selectedCode={response.herb_code} hasAnswer={true} />
+                </div>
+              )}
+              <button
+                style={{ ...styles.submitButton, background: 'linear-gradient(to right, #81c784, #66bb6a)', marginTop: '15px' }}
+                onClick={() => setShowFeedback(!showFeedback)}
+              >
+                {showFeedback ? 'Ẩn Phản Hồi' : 'Gửi Phản Hồi'}
+              </button>
+
+              {showFeedback && (
+                <div style={styles.feedbackBox}>
+                  <FeedbackPage />
+                </div>
               )}
             </>
           )}
@@ -298,6 +320,30 @@ const styles = {
     lineHeight: '1.8',
     fontSize: '16px',
     marginBottom: '20px',
+  },
+  radioGroup: {
+    display: 'flex',
+    gap: '20px',
+    marginTop: '10px',
+    marginBottom: '10px',
+  },
+  radioLabel: {
+    display: 'flex',
+    alignItems: 'center',
+    fontSize: '16px',
+    fontFamily: "'Be Vietnam Pro', sans-serif",
+    color: 'var(--text-color)',
+    cursor: 'pointer',
+  },
+  radioInput: {
+    marginRight: '8px',
+    transform: 'scale(1.2)',
+  },
+  herbsPageBox: {
+    marginTop: '30px',
+  },
+  feedbackBox: { // Add this style
+    marginTop: '30px',
   },
 };
 

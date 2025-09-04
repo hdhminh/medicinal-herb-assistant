@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException, UploadFile, File, Request, Query
 from fastapi.responses import FileResponse
 from PIL import Image
 import io
-
+import shutil
 from pydantic import BaseModel
 from app.services.herb_service import get_herb_info
 from app.services.googleai_service import generate_answer_gemini
@@ -27,41 +27,31 @@ async def ask_herb(query: HerbQuery):
     herb = get_herb_info(query.code)
     if not herb:
         return {"answer": "Không tìm thấy thông tin về mã cây đã nhập.", "source": None}
+    
     answer_text = generate_answer_gemini(herb, query.question, query.answer_type)
     source_url = herb.get("source")
     source_title = await get_title_from_url(source_url) if source_url else None
-    return {
+
+    response_data = {
         "answer": answer_text,
         "source": source_url,
-        "source_title": source_title
+        "source_title": source_title,
+        "name": herb.get("name"),
+        "scientific_name": herb.get("scientific_name"),
     }
 
-@router.post("/identify")
-async def identify_herb(file: UploadFile = File(...)):
-    if not file.content_type.startswith("image/"):
-        raise HTTPException(status_code=400, detail="Vui lòng gửi một tệp hình ảnh.")
-    upload_dir = "uploads"
-    os.makedirs(upload_dir, exist_ok=True)
-    file_path = os.path.join(upload_dir, file.filename)
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
-    try:
-        herb_code = "0001_bac_ha"  # Replace with actual classification
-        herb = get_herb_info(herb_code)
-        if not herb:
-            raise HTTPException(status_code=404, detail="Không tìm thấy thông tin về cây thuốc.")
-        question = "Xác định cây thuốc trong hình và mô tả công dụng của nó."
-        answer_text = generate_answer_gemini(herb, question, "tóm tắt")
-        source_url = herb.get("source")
-        source_title = await get_title_from_url(source_url) if source_url else None
-        return {
-            "answer": answer_text,
-            "source": source_url,
-            "source_title": source_title
-        }
-    finally:
-        if os.path.exists(file_path):
-            os.remove(file_path)
+    # Include description, uses, usage, precautions based on answer_type
+    if query.answer_type == "đầy đủ" or query.answer_type == "chi tiết":
+        response_data["description"] = herb.get("description")
+        response_data["uses"] = herb.get("uses")
+        response_data["usage"] = herb.get("usage")
+        response_data["precautions"] = herb.get("precautions")
+    
+    if query.answer_type == "chi tiết":
+        # Add more detailed info if available, for now it's the same as full
+        pass
+
+    return response_data
 
 @router.get("/list")
 async def list_herbs():
@@ -139,7 +129,7 @@ else:
 cnn.eval()
 
 @router.post("/identify")
-async def identify_herb(file: UploadFile = File(...)):
+async def identify_herb(file: UploadFile = File(...), detail_level: str = Query("tóm tắt")):
     print("✅ Nhận request /herb/identify")   
 
     contents = await file.read()
@@ -169,18 +159,42 @@ async def identify_herb(file: UploadFile = File(...)):
 
     if herb:
         # Có thông tin metadata
-        question = "Xác định cây thuốc trong hình và mô tả công dụng của nó."
-        answer_text = generate_answer_gemini(herb, question, "tóm tắt")
+        # The image has already been identified by the CV model.
+        # The question for Gemini should reflect this, focusing on describing the identified herb.
+        
+        question_map = {
+            "tóm tắt": f"Cây thuốc đã được xác định là {herb.get('name')} ({herb.get('scientific_name')}). Hãy tóm tắt công dụng, cách dùng và những lưu ý của nó.",
+            "đầy đủ": f"Cây thuốc đã được xác định là {herb.get('name')} ({herb.get('scientific_name')}). Hãy cung cấp đầy đủ thông tin về công dụng, cách dùng và những lưu ý của nó.",
+            "chi tiết": f"Cây thuốc đã được xác định là {herb.get('name')} ({herb.get('scientific_name')}). Hãy cung cấp thông tin chi tiết về công dụng, cách dùng và những lưu ý của nó, bao gồm mô tả."
+        }
+        question = question_map.get(detail_level, question_map["tóm tắt"])
+
+        answer_text = generate_answer_gemini(herb, question, detail_level)
         source_url = herb.get("source")
         source_title = await get_title_from_url(source_url) if source_url else None
 
-        return {
+        # Include description, uses, usage, precautions based on detail_level
+        response_data = {
             "answer": answer_text,
             "herb_code": herb_code,
             "confidence": confidence,
             "source": source_url,
-            "source_title": source_title
+            "source_title": source_title,
+            "name": herb.get("name"),
+            "scientific_name": herb.get("scientific_name"),
         }
+
+        if detail_level == "đầy đủ" or detail_level == "chi tiết":
+            response_data["description"] = herb.get("description")
+            response_data["uses"] = herb.get("uses")
+            response_data["usage"] = herb.get("usage")
+            response_data["precautions"] = herb.get("precautions")
+        
+        if detail_level == "chi tiết":
+            # Add more detailed info if available, for now it's the same as full
+            pass
+
+        return response_data
     else:
         # Không có metadata → trả về thẳng kết quả model
         print(f"⚠️ Không tìm thấy thông tin trong herbs_sample.json cho {herb_code}")

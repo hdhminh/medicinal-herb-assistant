@@ -3,3 +3,6 @@ uvicorn
 # openai
 python-dotenv
 google-generativeai
+torch 
+torchvision 
+torchaudio

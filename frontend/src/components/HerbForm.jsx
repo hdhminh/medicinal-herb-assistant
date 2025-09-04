@@ -118,32 +118,37 @@ const HerbForm = () => {
         )}
       </button>
 
-      {response && response.answer && response.answer !== '[Lỗi] Không thể lấy dữ liệu từ máy chủ.' && response.answer !== '[Lỗi] Vui lòng chọn mã cây thuốc và nhập câu hỏi.' && (
-        <>
-          <div style={styles.responseBox}>
-            <strong style={styles.responseLabel}>Kết quả:</strong>
-            <p
-              style={styles.responseText}
-              dangerouslySetInnerHTML={{ __html: formatResponse(response.answer) }}
-            />
-            <div style={styles.sourceContainer}>
+      {response && (
+        <div style={styles.responseBox}>
+          {response.answer && (response.answer === '[Lỗi] Không thể lấy dữ liệu từ máy chủ.' || response.answer === '[Lỗi] Vui lòng chọn mã cây thuốc và nhập câu hỏi.') ? (
+            <>
+              <strong style={styles.responseLabel}>Lỗi:</strong>
+              <p style={{ ...styles.responseText, color: '#d32f2f' }}>{response.answer}</p>
+            </>
+          ) : (
+            <>
+              <strong style={styles.responseLabel}>Kết quả:</strong>
+              {response.answer && (
+                <p
+                  style={styles.responseText}
+                  dangerouslySetInnerHTML={{ __html: formatResponse(response.answer) }}
+                />
+              )}
               {response.source && (
-                <div>
-                  <strong style={styles.sourceLabel}>Nguồn:</strong>
-                  <p style={styles.sourceText}>
+                <>
+                  <strong style={styles.responseLabel}>Nguồn:</strong>
+                  <p style={styles.responseText}>
                     <a href={response.source} target="_blank" rel="noopener noreferrer">
                       {response.source_title || response.source}
                     </a>
                   </p>
-                </div>
+                </>
               )}
-            </div>
-          </div>
-
-          <div style={styles.herbsPageBox}>
-            <HerbsPage selectedCode={code} hasAnswer={true} />
-          </div>
-
+              <div style={styles.herbsPageBox}>
+                <HerbsPage selectedCode={code} hasAnswer={true} />
+              </div>
+            </>
+          )}
           <button
             style={{ ...styles.button, background: 'linear-gradient(to right, #81c784, #66bb6a)' }}
             onClick={() => setShowFeedback(!showFeedback)}
@@ -156,13 +161,6 @@ const HerbForm = () => {
               <FeedbackPage />
             </div>
           )}
-        </>
-      )}
-
-      {response && response.answer && (response.answer === '[Lỗi] Không thể lấy dữ liệu từ máy chủ.' || response.answer === '[Lỗi] Vui lòng chọn mã cây thuốc và nhập câu hỏi.') && (
-        <div style={styles.responseBox}>
-          <strong style={styles.responseLabel}>Lỗi:</strong>
-          <p style={{ ...styles.responseText, color: '#d32f2f' }}>{response.answer}</p>
         </div>
       )}
     </div>
