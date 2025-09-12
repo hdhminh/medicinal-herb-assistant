@@ -6,6 +6,7 @@ import { FaRocket } from 'react-icons/fa';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import HerbsPage from './HerbsPage';
 import FeedbackPage from './FeedbackPage';
+import HerbsCam from './HerbsCam';
 
 const HerbForm = () => {
   const [code, setCode] = useState('');
@@ -163,6 +164,10 @@ const HerbForm = () => {
           )}
         </div>
       )}
+      <div style={{ marginTop: "40px" }}>
+        <h2>Nhận diện cây thuốc qua Camera</h2>
+        <HerbsCam />
+      </div>
     </div>
   );
 };
