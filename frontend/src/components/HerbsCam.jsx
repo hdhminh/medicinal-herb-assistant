@@ -16,10 +16,63 @@ export default function HerbCam() {
     }
   }, [stream]);
 
+  useEffect(() => {
+  if (!isCameraOn) return;
+
+  const interval = setInterval(() => {
+    if (!videoRef.current || !canvasRef.current) return;
+
+    const canvas = canvasRef.current;
+    const video = videoRef.current;
+    const context = canvas.getContext("2d");
+
+    // Draw video frame to canvas
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Convert to blob and send to backend
+    canvas.toBlob(async (blob) => {
+      if (!blob || blob.size === 0) {
+        console.error("❌ Empty blob, skipping upload");
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError("");
+
+        const formData = new FormData();
+        formData.append("file", blob, "frame.jpg");
+
+        const url =
+          "http://localhost:8000/herb/identify?detail_level=" +
+          encodeURIComponent("tóm tắt");
+
+        const res = await fetch(url, {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!res.ok) throw new Error("API error");
+        const result = await res.json();
+        setHerbResult(result);
+      } catch (err) {
+        console.error("Classification error:", err);
+        setError("Không thể nhận diện cây thuốc.");
+      } finally {
+        setLoading(false);
+      }
+    }, "image/jpeg");
+  }, 2000);
+
+  return () => clearInterval(interval);
+}, [isCameraOn]);
+
   const startCamera = async () => {
     try {
       const userStream = await navigator.mediaDevices.getUserMedia({ video: true });
-      setStream(userStream); // store stream
+      setStream(userStream);
       setIsCameraOn(true);
       setError("");
     } catch (err) {
@@ -30,7 +83,7 @@ export default function HerbCam() {
 
   const stopCamera = () => {
     if (stream) {
-      stream.getTracks().forEach(track => track.stop());
+      stream.getTracks().forEach((track) => track.stop());
       setStream(null);
     }
     setIsCameraOn(false);
@@ -46,16 +99,14 @@ export default function HerbCam() {
       ) : (
         <>
           <p style={styles.camStatus}>🔴 Camera đang bật</p>
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            style={styles.video}
-          />
+          <video ref={videoRef} autoPlay playsInline style={styles.video} />
           <canvas ref={canvasRef} style={{ display: "none" }} />
 
           <div style={{ marginTop: "10px" }}>
-            <button onClick={stopCamera} style={{ ...styles.button, background: "#d32f2f" }}>
+            <button
+              onClick={stopCamera}
+              style={{ ...styles.button, background: "#d32f2f" }}
+            >
               Tắt cam
             </button>
           </div>
@@ -66,9 +117,18 @@ export default function HerbCam() {
             {herbResult && (
               <div>
                 <h3 style={styles.caption}>{herbResult.name}</h3>
-                <p><strong>Tên khoa học:</strong> {herbResult.scientific_name || "Không có dữ liệu"}</p>
-                <p><strong>Mô tả:</strong> {herbResult.description || "Không có mô tả"}</p>
-                <p><strong>Công dụng:</strong> {herbResult.uses || "Không có công dụng"}</p>
+                <p>
+                  <strong>Tên khoa học:</strong>{" "}
+                  {herbResult.scientific_name || "Không có dữ liệu"}
+                </p>
+                <p>
+                  <strong>Mô tả:</strong>{" "}
+                  {herbResult.description || "Không có mô tả"}
+                </p>
+                <p>
+                  <strong>Công dụng:</strong>{" "}
+                  {herbResult.uses || "Không có công dụng"}
+                </p>
               </div>
             )}
           </div>

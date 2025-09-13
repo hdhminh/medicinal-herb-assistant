@@ -46,7 +46,7 @@ const HerbsPage = ({ selectedCode, hasAnswer }) => {
       const imageRes = await axios.get(`http://localhost:8000/herb/${code}/images?limit=${imagesPerClick}`);
       const images = imageRes.data || [];
       
-      // If we have images from the API, use the first one as the primary image
+
       if (images.length > 0) {
         setHerbs(prevHerbs => prevHerbs.map(h => 
           h.code === code ? { ...h, image_url: images[0] } : h
