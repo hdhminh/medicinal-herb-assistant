@@ -105,7 +105,12 @@ const HerbForm = () => {
       if (!res.ok) throw new Error("Upload failed");
       const result = await res.json();
       console.log("✅ Kết quả nhận diện:", result);
-      setResponse({ answer: JSON.stringify(result, null, 2), source: null });
+
+      setResponse({
+        answer: result.answer || "[Không có dữ liệu trả lời]",
+        source: result.source || null,
+        source_title: result.source_title || null,
+      });
     } catch (err) {
       console.error(err);
       setError("Lỗi khi xử lý ảnh");
