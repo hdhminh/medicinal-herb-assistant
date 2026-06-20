@@ -1,6 +1,6 @@
 # Medicinal Herb Assistant
 
-This repository hosts a team-built AI assistant for Vietnamese medicinal herbs. The system combines a FastAPI backend, a React frontend, a Gemini-powered Q&A flow, and a computer-vision pipeline for herb image recognition.
+This repository contains a team-built AI assistant for Vietnamese medicinal herbs. The system combines a FastAPI backend, a React frontend, a Gemini-powered Q&A flow, and a computer-vision pipeline for herb image recognition.
 
 ## Project Overview
 
@@ -10,7 +10,7 @@ The product was designed to help users:
 - identify herbs from uploaded images
 - review herb details such as common uses, usage guidance, and precautions
 - browse supporting reference information through a web interface
-- collect user feedback for future iteration
+- submit feedback for future iteration
 
 At a system level, the repository contains three main parts:
 
@@ -60,17 +60,17 @@ At a system level, the repository contains three main parts:
 
 ```text
 .
-├── app/                  FastAPI backend and herb data
-├── frontend/             React frontend
-├── CV_training/          Computer-vision training pipeline
-├── requirements.txt      Python dependencies
-├── package.json          Root-level JS dependencies used in the repo
-└── README.md
+|-- app/                  FastAPI backend and herb data
+|-- frontend/             React frontend
+|-- CV_training/          Computer-vision training pipeline
+|-- requirements.txt      Python dependencies
+|-- package.json          Root-level JS dependencies used in the repo
+`-- README.md
 ```
 
 ## My Contribution
 
-This repository is a fork of the original team project and is kept here to document my contribution scope clearly.
+This fork is used to document my contribution scope within the original team project.
 
 My confirmed contribution in the visible git history is centered on the `CV_training/` module, especially the addition of the full herb-recognition training workspace. That contribution includes:
 
@@ -85,13 +85,7 @@ Evidence in git history:
 - commit `ca79e6f` by `hdhminh` - `CV_training full folders.`
 - commit `ca71036` by `hdhminh` - `CV_training full folders.`
 
-I am not presenting this fork as sole authorship of the complete application. The backend, frontend, and other implementation areas reflect team collaboration across multiple contributors.
-
-## Notes On Fork Status
-
-- This repository is a fork maintained under my account.
-- Changes made here do not affect the original upstream repository unless a pull request is opened and merged there.
-- The fork is useful as a contribution showcase because it lets me explain exactly which area I worked on.
+This README does not present the full application as my sole work. The backend, frontend, and other implementation areas reflect collaboration across multiple contributors.
 
 ## Local Setup
 
@@ -120,9 +114,3 @@ cd CV_training
 pip install -r requirement.txt
 python main.py
 ```
-
-## Recommended Repository Description
-
-If you want a concise GitHub About description for this fork, use:
-
-`AI assistant for Vietnamese medicinal herbs with FastAPI, React, Gemini Q&A, and a CV training pipeline for herb recognition.`
